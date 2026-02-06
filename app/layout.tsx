@@ -1,6 +1,8 @@
+import './globals.css'
+
 export const metadata = {
-  title: 'Hello World',
-  description: 'A simple Next.js Hello World page',
+  title: 'Caption Likes',
+  description: 'Browse liked captions and their images',
 }
 
 export default function RootLayout({
@@ -10,7 +12,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="bg-stone-50 min-h-screen text-stone-900">
+        {children}
+      </body>
     </html>
   )
 }
