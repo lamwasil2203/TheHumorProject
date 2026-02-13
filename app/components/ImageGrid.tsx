@@ -32,7 +32,7 @@ export default function ImageGrid({ items }: { items: CaptionLike[] }) {
     <>
       {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-        {items.map((item, index) => {
+        {items.map((item) => {
           const caption = item.captions
           const image = caption?.images
           const imageUrl = image?.url || image?.image_url || image?.src
@@ -41,14 +41,13 @@ export default function ImageGrid({ items }: { items: CaptionLike[] }) {
             <button
               key={item.id}
               onClick={() => setSelected(item)}
-              className="group relative aspect-square rounded-2xl overflow-hidden bg-stone-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-slide-up"
-              style={{ animationDelay: `${Math.min(index * 50, 500)}ms`, animationFillMode: 'backwards' }}
+              className="group relative aspect-square rounded-2xl overflow-hidden bg-stone-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 shadow-sm hover:shadow-xl transition-all duration-150 hover:-translate-y-1"
             >
               {imageUrl ? (
                 <img
                   src={imageUrl}
                   alt="Caption image"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-150 group-hover:scale-105"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-stone-300 bg-gradient-to-br from-stone-100 to-stone-200">
@@ -58,7 +57,7 @@ export default function ImageGrid({ items }: { items: CaptionLike[] }) {
                 </div>
               )}
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end justify-center pb-4">
                 <span className="text-white text-xs font-semibold tracking-wide flex items-center gap-1.5 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
