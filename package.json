@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/lamwasil2203/TheHumorProject#readme",
   "dependencies": {
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.1",
     "@tailwindcss/postcss": "^4.1.18",
     "next": "^16.1.6",
