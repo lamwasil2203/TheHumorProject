@@ -2,40 +2,27 @@
 
 import { useState } from 'react'
 
-type CaptionLike = {
-  id: number
+type Caption = {
+  id: string
+  content?: string
   created_datetime_utc: string
-  profile_id: string
-  caption_id: string
-  captions?: {
+  images?: {
     id: string
-    text?: string
-    content?: string
-    image_id?: string
-    images?: {
-      id: string
-      url?: string
-      image_url?: string
-      src?: string
-      title?: string
-      [key: string]: unknown
-    }
+    url?: string
     [key: string]: unknown
   }
   [key: string]: unknown
 }
 
-export default function ImageGrid({ items }: { items: CaptionLike[] }) {
-  const [selected, setSelected] = useState<CaptionLike | null>(null)
+export default function ImageGrid({ items }: { items: Caption[] }) {
+  const [selected, setSelected] = useState<Caption | null>(null)
 
   return (
     <>
       {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
         {items.map((item) => {
-          const caption = item.captions
-          const image = caption?.images
-          const imageUrl = image?.url || image?.image_url || image?.src
+          const imageUrl = item.images?.url
 
           return (
             <button
@@ -91,12 +78,10 @@ export default function ImageGrid({ items }: { items: CaptionLike[] }) {
               </svg>
             </button>
 
-            {/* Image */}
+            {/* Image + Caption */}
             {(() => {
-              const caption = selected.captions
-              const image = caption?.images
-              const imageUrl = image?.url || image?.image_url || image?.src
-              const captionText = caption?.text || caption?.content
+              const imageUrl = selected.images?.url
+              const captionText = selected.content
 
               return (
                 <>
@@ -120,7 +105,7 @@ export default function ImageGrid({ items }: { items: CaptionLike[] }) {
                     <div className="flex items-center gap-2 mt-5">
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                       <p className="text-sm text-stone-400">
-                        Liked on {new Date(selected.created_datetime_utc).toLocaleDateString('en-US', {
+                        {new Date(selected.created_datetime_utc).toLocaleDateString('en-US', {
                           month: 'long',
                           day: 'numeric',
                           year: 'numeric'

@@ -7,15 +7,22 @@ export default async function Home() {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: captionLikes, error } = await supabase
-    .from('caption_likes')
+  const { data: captions, error } = await supabase
+    .from('captions')
     .select(`
       *,
-      captions (
-        *,
-        images (*)
-      )
+      images (*)
     `)
+    .eq('is_public', true)
+
+  // Filter out inaccessible images, then deduplicate by image so each image appears once
+  const seen = new Set<string>()
+  const visibleCaptions = (captions ?? []).filter(c => {
+    const url = c.images?.url
+    if (!url || seen.has(url)) return false
+    seen.add(url)
+    return true
+  })
 
   if (error) {
     return (
@@ -44,8 +51,8 @@ export default async function Home() {
               </svg>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-stone-800 tracking-tight leading-none">Caption Likes</h1>
-              <p className="text-stone-400 text-xs mt-0.5">{captionLikes?.length || 0} items</p>
+              <h1 className="text-lg font-bold text-stone-800 tracking-tight leading-none">Public Captions</h1>
+              <p className="text-stone-400 text-xs mt-0.5">{visibleCaptions.length} items</p>
             </div>
           </div>
 
@@ -77,8 +84,8 @@ export default async function Home() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto">
-        {captionLikes && captionLikes.length > 0 ? (
-          <ImageGrid items={captionLikes} />
+        {visibleCaptions.length > 0 ? (
+          <ImageGrid items={visibleCaptions} />
         ) : (
           <div className="text-center py-24 animate-slide-up">
             <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mx-auto mb-4">
@@ -86,8 +93,8 @@ export default async function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <p className="text-stone-400 font-medium">No caption likes yet</p>
-            <p className="text-stone-300 text-sm mt-1">Your liked captions will appear here</p>
+            <p className="text-stone-400 font-medium">No captions yet</p>
+            <p className="text-stone-300 text-sm mt-1">Public captions will appear here</p>
           </div>
         )}
       </div>

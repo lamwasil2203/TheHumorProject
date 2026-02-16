@@ -1,8 +1,8 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Caption Likes',
-  description: 'Browse liked captions and their images',
+  title: 'Public Captions',
+  description: 'Browse public captions and their images',
 }
 
 export default function RootLayout({

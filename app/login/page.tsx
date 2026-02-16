@@ -34,9 +34,9 @@ export default function LoginPage() {
 
           {/* Title */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-stone-800 tracking-tight">Caption Likes</h1>
+            <h1 className="text-2xl font-bold text-stone-800 tracking-tight">Public Captions</h1>
             <p className="text-stone-500 text-sm mt-2 leading-relaxed">
-              Sign in to browse your favorite captions
+              Sign in to browse public captions
             </p>
           </div>
 
@@ -76,7 +76,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-stone-400 mt-6">
-          Your liked captions are waiting for you
+          Discover public captions and their images
         </p>
       </div>
     </main>
