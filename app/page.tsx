@@ -4,19 +4,20 @@ import type { Battle } from './components/CaptionBattle'
 import SignOutButton from './components/SignOutButton'
 import ThemeToggle from './components/ThemeToggle'
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic' // required: page reads user cookies for auth
 
 export default async function Home() {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Fetch captions with common-use images only
+  // Fetch captions with common-use images only (only needed fields)
   const { data: captions, error } = await supabase
     .from('captions')
     .select(`
-      *,
-      images!inner (*)
+      id,
+      content,
+      images!inner (id, url)
     `)
     .eq('images.is_common_use', true)
 
@@ -68,20 +69,6 @@ export default async function Home() {
     [battles[i], battles[j]] = [battles[j], battles[i]]
   }
   battles.splice(300)
-
-  // Fetch user's existing votes (if logged in)
-  let userVotes: Record<string, number> = {}
-  if (user) {
-    const { data: votes } = await supabase
-      .from('caption_votes')
-      .select('caption_id, vote_value')
-      .eq('profile_id', user.id)
-    if (votes) {
-      for (const v of votes) {
-        userVotes[v.caption_id] = v.vote_value
-      }
-    }
-  }
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0]
   const avatarUrl = user?.user_metadata?.avatar_url
@@ -136,7 +123,7 @@ export default async function Home() {
       {/* Content */}
       <div className="max-w-7xl mx-auto">
         {battles.length > 0 ? (
-          <CaptionBattle battles={battles} userId={user?.id ?? null} userVotes={userVotes} />
+          <CaptionBattle battles={battles} userId={user?.id ?? null} />
         ) : (
           <div className="text-center py-24 animate-slide-up">
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-violet-100 dark:bg-violet-500/15">

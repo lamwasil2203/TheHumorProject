@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { submitVote } from '@/app/actions/vote'
 
 type Caption = {
@@ -23,7 +23,6 @@ export type Battle = {
 type Props = {
   battles: Battle[]
   userId: string | null
-  userVotes: Record<string, number>
 }
 
 export default function CaptionBattle({ battles, userId }: Props) {
@@ -35,6 +34,14 @@ export default function CaptionBattle({ battles, userId }: Props) {
 
   const total = battles.length
   const battle = battles[currentIndex] as Battle | undefined
+
+  // Preload the next battle's image so it's ready before the user gets there
+  useEffect(() => {
+    const next = battles[currentIndex + 1]
+    if (!next) return
+    const img = new Image()
+    img.src = next.imageUrl
+  }, [currentIndex, battles])
 
   function handlePick(winner: 'A' | 'B') {
     if (!userId || picked) return

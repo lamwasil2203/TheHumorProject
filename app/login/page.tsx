@@ -17,40 +17,40 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
       {/* Decorative background blobs */}
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-amber-200/30 blur-3xl animate-float" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-orange-200/30 blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-violet-200/30 dark:bg-violet-500/10 blur-3xl animate-float" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-fuchsia-200/30 dark:bg-fuchsia-500/10 blur-3xl animate-float" style={{ animationDelay: '3s' }} />
 
       <div className="w-full max-w-md animate-scale-in relative">
         {/* Card */}
-        <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-lg shadow-stone-200/50 border border-white/80 p-10">
+        <div className="bg-white/70 dark:bg-white/[0.06] backdrop-blur-xl rounded-3xl shadow-lg shadow-violet-200/40 dark:shadow-black/30 border border-violet-100/60 dark:border-white/10 p-10">
           {/* Logo / Icon */}
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-200/50">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
           </div>
 
           {/* Title */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-stone-800 tracking-tight">Public Captions</h1>
-            <p className="text-stone-500 text-sm mt-2 leading-relaxed">
-              Sign in to browse public captions
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">Caption Battle</h1>
+            <p className="text-slate-500 dark:text-violet-300/70 text-sm mt-2 leading-relaxed">
+              Sign in to vote on the funniest captions
             </p>
           </div>
 
           {/* Divider */}
           <div className="flex items-center gap-3 mb-8">
-            <div className="flex-1 h-px bg-stone-200" />
-            <span className="text-xs text-stone-400 font-medium uppercase tracking-wider">Continue with</span>
-            <div className="flex-1 h-px bg-stone-200" />
+            <div className="flex-1 h-px bg-violet-100 dark:bg-white/10" />
+            <span className="text-xs text-violet-400/70 dark:text-violet-400/60 font-medium uppercase tracking-wider">Continue with</span>
+            <div className="flex-1 h-px bg-violet-100 dark:bg-white/10" />
           </div>
 
           {/* Google Button */}
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 bg-white rounded-xl px-5 py-3.5 text-sm font-semibold text-stone-700 hover:bg-stone-50 transition-all duration-200 shadow-sm hover:shadow-md border border-stone-200 hover:border-stone-300 cursor-pointer active:scale-[0.98]"
+            className="w-full flex items-center justify-center gap-3 bg-white dark:bg-white/[0.08] rounded-xl px-5 py-3.5 text-sm font-semibold text-slate-700 dark:text-violet-100 hover:bg-violet-50 dark:hover:bg-white/[0.14] transition-all duration-200 shadow-sm hover:shadow-md border border-violet-200/60 dark:border-white/10 hover:border-violet-300 dark:hover:border-violet-500/40 cursor-pointer active:scale-[0.98]"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -75,8 +75,8 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-stone-400 mt-6">
-          Discover public captions and their images
+        <p className="text-center text-xs text-violet-400/70 dark:text-violet-400/50 mt-6">
+          Pick the funnier caption and let the crowd decide
         </p>
       </div>
     </main>
