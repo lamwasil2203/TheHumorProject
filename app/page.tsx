@@ -35,8 +35,9 @@ export default async function Home() {
   // Group captions by image_id — only keep images with 2+ captions
   const byImage = new Map<string, { url: string; captions: typeof captions }>()
   for (const c of captions ?? []) {
-    const imageId = c.images?.id as string | undefined
-    const imageUrl = c.images?.url as string | undefined
+    const imageObj = Array.isArray(c.images) ? c.images[0] : c.images
+    const imageId = imageObj?.id as string | undefined
+    const imageUrl = imageObj?.url as string | undefined
     if (!imageId || !imageUrl) continue
 
     if (!byImage.has(imageId)) {

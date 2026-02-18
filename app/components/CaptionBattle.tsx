@@ -6,11 +6,6 @@ import { submitVote } from '@/app/actions/vote'
 type Caption = {
   id: string
   content?: string
-  images?: {
-    id: string
-    url?: string
-    [key: string]: unknown
-  }
   [key: string]: unknown
 }
 
