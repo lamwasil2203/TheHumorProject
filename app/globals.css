@@ -3,71 +3,117 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --animate-fade-in: fade-in 0.2s ease-out;
-  --animate-slide-up: slide-up 0.2s ease-out;
-  --animate-scale-in: scale-in 0.15s ease-out;
-  --animate-float: float 6s ease-in-out infinite;
+
+  /* ── Animations ── */
+  --animate-fade-in:      fade-in      0.25s ease-out;
+  --animate-slide-up:     slide-up     0.25s ease-out;
+  --animate-scale-in:     scale-in     0.2s  cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-float:        float        7s    ease-in-out infinite;
+  --animate-glow-pulse:    glow-pulse    3s    ease-in-out infinite;
+  --animate-shimmer:       shimmer       2.4s  linear infinite;
+  --animate-bubble-float:  bubble-float  var(--bubble-dur, 22s) ease-in-out var(--bubble-delay, 0s) infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
-    to { opacity: 1; }
+    to   { opacity: 1; }
   }
 
   @keyframes slide-up {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0);    }
   }
 
   @keyframes scale-in {
-    from { opacity: 0; transform: scale(0.97); }
-    to { opacity: 1; transform: scale(1); }
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1);    }
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    0%, 100% { transform: translateY(0px);  }
+    50%      { transform: translateY(-14px); }
   }
 
-  --animate-winner-glow: winner-glow 0.6s ease-out forwards;
-  --animate-loser-fade: loser-fade 0.6s ease-out forwards;
-  --animate-battle-slide-in: battle-slide-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  --animate-vs-pulse: vs-pulse 2s ease-in-out infinite;
-  --animate-shimmer: shimmer 2s linear infinite;
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 24px rgba(139, 92, 246, 0.12); }
+    50%      { box-shadow: 0 0 48px rgba(139, 92, 246, 0.28); }
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+  }
+
+
+  /* leftovers from old battle mode — kept so nothing breaks */
+  --animate-winner-glow:      winner-glow      0.6s ease-out forwards;
+  --animate-loser-fade:       loser-fade       0.6s ease-out forwards;
+  --animate-battle-slide-in:  battle-slide-in  0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-vs-pulse:         vs-pulse         2s ease-in-out infinite;
 
   @keyframes winner-glow {
-    0% { border-color: transparent; transform: scale(1); }
-    50% { border-color: #a78bfa; transform: scale(1.03); }
-    100% { border-color: #a78bfa; transform: scale(1.01); box-shadow: 0 0 28px rgba(167, 139, 250, 0.4), 0 0 56px rgba(167, 139, 250, 0.15); }
+    0%   { border-color: transparent; transform: scale(1); }
+    50%  { border-color: #a78bfa;     transform: scale(1.03); }
+    100% { border-color: #a78bfa;     transform: scale(1.01);
+           box-shadow: 0 0 28px rgba(167,139,250,0.4), 0 0 56px rgba(167,139,250,0.15); }
   }
 
   @keyframes loser-fade {
-    0% { opacity: 1; transform: scale(1); }
+    0%   { opacity: 1;    transform: scale(1);    }
     100% { opacity: 0.25; transform: scale(0.96); filter: grayscale(0.6); }
   }
 
   @keyframes battle-slide-in {
-    0% { opacity: 0; transform: translateX(50px) scale(0.98); }
-    100% { opacity: 1; transform: translateX(0) scale(1); }
+    0%   { opacity: 0; transform: translateX(50px) scale(0.98); }
+    100% { opacity: 1; transform: translateX(0)    scale(1);    }
   }
 
   @keyframes vs-pulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3); }
-    50% { transform: scale(1.1); box-shadow: 0 6px 24px rgba(139, 92, 246, 0.5); }
-  }
-
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0%, 100% { transform: scale(1);   box-shadow: 0 4px 16px rgba(139,92,246,0.3); }
+    50%      { transform: scale(1.1); box-shadow: 0 6px 24px rgba(139,92,246,0.5); }
   }
 }
 
+/* ── Base ── */
+*, *::before, *::after {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle scrollbar in dark mode */
+.dark ::-webkit-scrollbar              { width: 4px; }
+.dark ::-webkit-scrollbar-track        { background: transparent; }
+.dark ::-webkit-scrollbar-thumb        { background: rgba(139,92,246,0.25); border-radius: 9999px; }
+.dark ::-webkit-scrollbar-thumb:hover  { background: rgba(139,92,246,0.45); }
+
+/* ── Speech bubble float animation (referenced by name in inline styles) ── */
+@keyframes bubble-float {
+  0%   { opacity: 0;   transform: translateY(0)      translateX(0px)   rotate(-3deg) scale(0.85); }
+  8%   { opacity: 1; }
+  30%  {               transform: translateY(-28vh)  translateX(14px)  rotate(2deg)  scale(1);    }
+  55%  {               transform: translateY(-55vh)  translateX(-10px) rotate(-1deg) scale(1.02); }
+  85%  { opacity: 0.6; transform: translateY(-85vh)  translateX(8px)   rotate(2deg)  scale(1);    }
+  100% { opacity: 0;   transform: translateY(-112vh) translateX(0px)   rotate(-2deg) scale(0.9);  }
+}
+
+/* ── Speech bubble SVG colours (dark-mode aware, avoids SVG Tailwind quirks) ── */
+.bubble-path {
+  stroke: rgba(109, 40, 217, 0.55);
+  fill:   rgba(109, 40, 217, 0.05);
+}
+.bubble-line {
+  stroke: rgba(109, 40, 217, 0.4);
+}
+.dark .bubble-path {
+  stroke: rgba(196, 181, 253, 0.75);
+  fill:   rgba(167, 139, 250, 0.12);
+}
+.dark .bubble-line {
+  stroke: rgba(196, 181, 253, 0.55);
+}
+
+/* Shimmer util */
 .progress-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
   background-size: 200% 100%;
-  animation: shimmer 2s linear infinite;
+  animation: shimmer 2.4s linear infinite;
 }
