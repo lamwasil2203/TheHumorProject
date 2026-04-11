@@ -31,7 +31,7 @@ type BattlePair = { imageUrl: string; caption: CaptionWithVotes }
 
 const cardCls =
   'rounded-3xl overflow-hidden border ' +
-  'bg-white border-violet-200/50 shadow-[0_4px_32px_rgba(109,40,217,0.06)] ' +
+  'bg-white border-violet-200/70 shadow-[0_4px_32px_rgba(109,40,217,0.1),0_1px_6px_rgba(0,0,0,0.06)] ' +
   'dark:bg-white/[0.03] dark:border-violet-500/[0.16] ' +
   'dark:shadow-[0_0_0_1px_rgba(109,40,217,0.1),0_8px_48px_rgba(0,0,0,0.55)]'
 
@@ -66,7 +66,7 @@ function ImageCard({ group, userId, votes, counts, onVote }: {
           return (
             <div key={caption.id}
               className="flex items-center gap-3 rounded-2xl px-4 py-3
-                bg-slate-50 border border-slate-200/80
+                bg-slate-50 border border-slate-200
                 dark:bg-white/[0.04] dark:border-violet-500/[0.1]">
               <p className="flex-1 text-sm leading-relaxed text-slate-700 dark:text-violet-100/80">
                 "{caption.content}"
@@ -265,7 +265,7 @@ function BattleCard({ pair, index, total, userId, userVote, counts, onVote, onNe
 
 const tabBarCls =
   'flex gap-1 p-1 rounded-2xl ' +
-  'bg-slate-100/80 border border-slate-200/60 ' +
+  'bg-slate-100 border border-slate-200 ' +
   'dark:bg-white/[0.03] dark:border-violet-500/[0.1]'
 
 function TabBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
@@ -305,6 +305,8 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
   const [searchQuery,  setSearchQuery]  = useState('')
   const [spotlightGroup, setSpotlightGroup] = useState<ImageGroup | null>(null)
   const [battleIndex,  setBattleIndex]  = useState(0)
+  const [gameScore,    setGameScore]    = useState({ up: 0, down: 0 })
+  const [expandedImageUrl, setExpandedImageUrl] = useState<string | null>(null)
 
   // Shuffled pairs for game mode — stable for the session
   const battlePairs = useMemo<BattlePair[]>(() => {
@@ -340,6 +342,14 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
         setCounts(c => ({ ...c, [captionId]: prevCounts }))
       }
     })
+  }
+
+  function handleGameVote(captionId: string, value: 1 | -1) {
+    handleVote(captionId, value)
+    setGameScore(s => ({
+      up:   s.up   + (value === 1  ? 1 : 0),
+      down: s.down + (value === -1 ? 1 : 0),
+    }))
   }
 
   const feedGroups = useMemo(() => {
@@ -397,7 +407,30 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto animate-fade-in">
+    <>
+      {/* ── Leaderboard image modal ── */}
+      {expandedImageUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
+          onClick={() => setExpandedImageUrl(null)}
+        >
+          <img
+            src={expandedImageUrl}
+            alt=""
+            className="max-w-[90vw] max-h-[85vh] rounded-2xl object-contain shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          />
+          <button
+            className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors"
+            onClick={() => setExpandedImageUrl(null)}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
+      <div className="max-w-2xl mx-auto animate-fade-in">
 
       {/* ── Main tabs ── */}
       <div className={`${tabBarCls} mb-6`}>
@@ -502,6 +535,17 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
       {/* ════════════════ GAME TAB ════════════════ */}
       {tab === 'game' && (
         <>
+          {/* Live score */}
+          {(gameScore.up > 0 || gameScore.down > 0) && (
+            <div className="flex justify-center gap-6 mb-5">
+              <span className="text-sm font-semibold text-green-500 dark:text-green-400">
+                ✓ {gameScore.up} liked
+              </span>
+              <span className="text-sm font-semibold text-red-400 dark:text-red-500">
+                ✗ {gameScore.down} skipped
+              </span>
+            </div>
+          )}
           {battleDone ? (
             <div className="text-center py-24 animate-fade-in">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4
@@ -511,11 +555,19 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
                 </svg>
               </div>
               <p className="font-semibold text-slate-700 dark:text-violet-200 mb-1">All done!</p>
-              <p className="text-sm text-slate-400 dark:text-violet-400/40 mb-6">
+              <p className="text-sm text-slate-400 dark:text-violet-400/40 mb-3">
                 You've voted on all {battlePairs.length} captions
               </p>
+              <div className="flex justify-center gap-6 mb-6">
+                <span className="text-sm font-semibold text-green-500 dark:text-green-400">
+                  ✓ {gameScore.up} liked
+                </span>
+                <span className="text-sm font-semibold text-red-400 dark:text-red-500">
+                  ✗ {gameScore.down} skipped
+                </span>
+              </div>
               <button
-                onClick={() => setBattleIndex(0)}
+                onClick={() => { setBattleIndex(0); setGameScore({ up: 0, down: 0 }) }}
                 className="px-6 py-2.5 rounded-2xl text-sm font-semibold cursor-pointer
                   bg-gradient-to-r from-violet-500 to-purple-600 text-white
                   shadow-[0_0_24px_rgba(139,92,246,0.4)] hover:shadow-[0_0_32px_rgba(139,92,246,0.55)]
@@ -533,7 +585,7 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
               userId={userId}
               userVote={votes[currentPair.caption.id] ?? 0}
               counts={counts}
-              onVote={handleVote}
+              onVote={handleGameVote}
               onNext={() => setBattleIndex(i => i + 1)}
             />
           )}
@@ -565,7 +617,8 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
                 </span>
                 <img
                   src={caption.imageUrl} alt=""
-                  className="w-10 h-10 rounded-xl object-cover shrink-0 bg-slate-100 dark:bg-white/[0.05]"
+                  onClick={() => setExpandedImageUrl(caption.imageUrl)}
+                  className="w-10 h-10 rounded-xl object-cover shrink-0 bg-slate-100 dark:bg-white/[0.05] cursor-pointer hover:opacity-75 transition-opacity"
                 />
                 <p className="flex-1 text-sm leading-relaxed line-clamp-2 text-slate-600 dark:text-violet-100/70">
                   {caption.content}
@@ -583,5 +636,6 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
         </div>
       )}
     </div>
+    </>
   )
 }

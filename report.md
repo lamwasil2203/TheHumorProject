@@ -190,3 +190,9 @@
 ### Overall Takeaways
 I want to somehow improve the user experience of the website by improving the laggy part of the wesbsite, make it more 
 interactive and improving the voting system. 
+
+---
+
+## Changes Made to the App
+
+Based on the user study findings, four changes were made to the app. First, a thin divider was added in the navbar between the Upload button and the Theme/Sign Out controls, since all three users found those buttons confusing when grouped together. Second, the game mode now tracks a live score — showing how many captions you liked vs. skipped as you play, with a final summary on the completion screen and a reset when you start over — which addresses the feedback from Louai and Dylan about not being able to track their progress. Third, the small thumbnail images in the leaderboard are now clickable and open a full-screen modal so you can actually see the image clearly, fixing the friction that both Louai and Dylan ran into when they tried to click them. Finally, the light mode was polished by strengthening card borders and shadows so the UI elements are easier to distinguish, and a matching scrollbar style was added to make light mode feel as finished as dark mode.

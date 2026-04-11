@@ -108,6 +108,7 @@ export default async function Home() {
               </div>
             )}
             {user && <UploadImage />}
+            <div className="w-px h-5 bg-slate-200 dark:bg-violet-500/20 mx-0.5" />
             <ThemeToggle />
             <SignOutButton />
           </div>

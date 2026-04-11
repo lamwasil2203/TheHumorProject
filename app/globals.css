@@ -79,10 +79,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Subtle scrollbar in dark mode */
-.dark ::-webkit-scrollbar              { width: 4px; }
-.dark ::-webkit-scrollbar-track        { background: transparent; }
-.dark ::-webkit-scrollbar-thumb        { background: rgba(139,92,246,0.25); border-radius: 9999px; }
+/* Scrollbar — light mode */
+::-webkit-scrollbar              { width: 4px; }
+::-webkit-scrollbar-track        { background: transparent; }
+::-webkit-scrollbar-thumb        { background: rgba(139,92,246,0.2); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover  { background: rgba(139,92,246,0.38); }
+
+/* Scrollbar — dark mode (overrides above) */
+.dark ::-webkit-scrollbar-thumb        { background: rgba(139,92,246,0.25); }
 .dark ::-webkit-scrollbar-thumb:hover  { background: rgba(139,92,246,0.45); }
 
 /* ── Speech bubble float animation (referenced by name in inline styles) ── */
