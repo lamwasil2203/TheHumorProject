@@ -306,7 +306,7 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
   const [spotlightGroup, setSpotlightGroup] = useState<ImageGroup | null>(null)
   const [battleIndex,  setBattleIndex]  = useState(0)
   const [gameScore,    setGameScore]    = useState({ up: 0, down: 0 })
-  const [expandedImageUrl, setExpandedImageUrl] = useState<string | null>(null)
+  const [expandedEntry, setExpandedEntry] = useState<{ imageUrl: string; content: string; score: number; rank: number } | null>(null)
 
   // Shuffled pairs for game mode — stable for the session
   const battlePairs = useMemo<BattlePair[]>(() => {
@@ -408,21 +408,43 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
 
   return (
     <>
-      {/* ── Leaderboard image modal ── */}
-      {expandedImageUrl && (
+      {/* ── Leaderboard expanded modal ── */}
+      {expandedEntry && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
-          onClick={() => setExpandedImageUrl(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer p-6"
+          onClick={() => setExpandedEntry(null)}
         >
-          <img
-            src={expandedImageUrl}
-            alt=""
-            className="max-w-[90vw] max-h-[85vh] rounded-2xl object-contain shadow-2xl"
+          <div
+            className="w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl cursor-default
+              bg-white dark:bg-[#0f0d1f]"
             onClick={e => e.stopPropagation()}
-          />
+          >
+            <img
+              src={expandedEntry.imageUrl}
+              alt=""
+              className="w-full aspect-[4/3] object-cover"
+            />
+            <div className="px-6 py-5">
+              <p className="text-base leading-relaxed text-slate-800 dark:text-violet-50/90 mb-3">
+                "{expandedEntry.content}"
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 dark:text-violet-400/50">
+                  #{expandedEntry.rank} on leaderboard
+                </span>
+                <span className={`text-sm font-bold tabular-nums ${
+                  expandedEntry.score > 0 ? 'text-green-500 dark:text-green-400'
+                  : expandedEntry.score < 0 ? 'text-red-400 dark:text-red-500'
+                  : 'text-slate-300 dark:text-white/20'
+                }`}>
+                  {expandedEntry.score > 0 ? '+' : ''}{expandedEntry.score}
+                </span>
+              </div>
+            </div>
+          </div>
           <button
             className="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors"
-            onClick={() => setExpandedImageUrl(null)}
+            onClick={() => setExpandedEntry(null)}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -605,8 +627,11 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
 
           <ol className="divide-y divide-slate-100 dark:divide-violet-500/[0.07]">
             {leaderboard.map((caption, i) => (
-              <li key={caption.id} className="flex items-center gap-4 px-5 py-4 transition-colors
-                hover:bg-slate-50 dark:hover:bg-violet-500/[0.04]">
+              <li
+                key={caption.id}
+                onClick={() => setExpandedEntry({ imageUrl: caption.imageUrl, content: caption.content, score: caption.score, rank: i + 1 })}
+                className="flex items-center gap-4 px-5 py-4 transition-colors cursor-pointer
+                  hover:bg-slate-50 dark:hover:bg-violet-500/[0.04]">
                 <span className={`text-xs font-bold w-7 shrink-0 tabular-nums text-right ${
                   i === 0 ? 'text-yellow-500 dark:text-yellow-400'
                   : i === 1 ? 'text-slate-400 dark:text-slate-500'
@@ -617,8 +642,7 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
                 </span>
                 <img
                   src={caption.imageUrl} alt=""
-                  onClick={() => setExpandedImageUrl(caption.imageUrl)}
-                  className="w-10 h-10 rounded-xl object-cover shrink-0 bg-slate-100 dark:bg-white/[0.05] cursor-pointer hover:opacity-75 transition-opacity"
+                  className="w-10 h-10 rounded-xl object-cover shrink-0 bg-slate-100 dark:bg-white/[0.05]"
                 />
                 <p className="flex-1 text-sm leading-relaxed line-clamp-2 text-slate-600 dark:text-violet-100/70">
                   {caption.content}
