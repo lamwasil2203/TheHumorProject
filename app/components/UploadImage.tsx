@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 const API_BASE = 'https://api.almostcrackd.ai'
 const ACCEPTED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/heic']
@@ -24,9 +25,11 @@ async function getToken(): Promise<string> {
 
 export default function UploadImage({ showFloating = false }: { showFloating?: boolean }) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
   const [status, setStatus] = useState<Status>('idle')
   const [step, setStep] = useState('')
   const [captions, setCaptions] = useState<Caption[]>([])
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('')
   const [error, setError] = useState('')
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -43,6 +46,7 @@ export default function UploadImage({ showFloating = false }: { showFloating?: b
     setStatus('uploading')
     setError('')
     setCaptions([])
+    setUploadedImageUrl('')
 
     try {
       const token = await getToken()
@@ -57,6 +61,7 @@ export default function UploadImage({ showFloating = false }: { showFloating?: b
       })
       if (!presignRes.ok) throw new Error(`Presign failed: ${presignRes.status}`)
       const { presignedUrl, cdnUrl } = await presignRes.json()
+      setUploadedImageUrl(cdnUrl)
 
       // Step 2: Upload image bytes to presigned URL
       setStep('Uploading image…')
@@ -90,6 +95,7 @@ export default function UploadImage({ showFloating = false }: { showFloating?: b
       setCaptions(Array.isArray(result) ? result : [])
       setStatus('done')
       setStep('')
+      router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
       setStatus('error')
@@ -108,6 +114,7 @@ export default function UploadImage({ showFloating = false }: { showFloating?: b
     setStatus('idle')
     setError('')
     setCaptions([])
+    setUploadedImageUrl('')
     setStep('')
   }
 
@@ -156,7 +163,8 @@ export default function UploadImage({ showFloating = false }: { showFloating?: b
           onClick={(e) => { if (e.target === e.currentTarget) { reset(); setOpen(false) } }}
         >
           <div className="w-full max-w-md rounded-3xl shadow-2xl border animate-scale-in
-            bg-white dark:bg-[#110d1f] border-violet-100 dark:border-white/10 p-8">
+            bg-white dark:bg-[#110d1f] border-violet-100 dark:border-white/10 p-8
+            max-h-[90vh] overflow-y-auto">
 
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
@@ -224,7 +232,7 @@ export default function UploadImage({ showFloating = false }: { showFloating?: b
               </button>
             )}
 
-            {/* Done: show captions */}
+            {/* Done: show image + captions */}
             {status === 'done' && (
               <div>
                 <div className="flex items-center gap-2 mb-4">
@@ -237,7 +245,16 @@ export default function UploadImage({ showFloating = false }: { showFloating?: b
                     {captions.length} caption{captions.length !== 1 ? 's' : ''} generated
                   </p>
                 </div>
-                <ul className="space-y-3 mb-5 max-h-64 overflow-y-auto pr-1">
+
+                {/* Uploaded image */}
+                {uploadedImageUrl && (
+                  <div className="rounded-2xl overflow-hidden mb-4 border border-violet-100 dark:border-violet-500/20">
+                    <img src={uploadedImageUrl} alt="Your uploaded image" className="w-full aspect-[4/3] object-cover" />
+                  </div>
+                )}
+
+                {/* Captions aligned with image */}
+                <ul className="space-y-3 mb-5">
                   {captions.map((c, i) => (
                     <li
                       key={c.id ?? i}
@@ -256,12 +273,23 @@ export default function UploadImage({ showFloating = false }: { showFloating?: b
                     </li>
                   )}
                 </ul>
-                <button
-                  onClick={reset}
-                  className="w-full py-2.5 rounded-xl text-sm font-semibold border border-violet-200 dark:border-violet-500/30 text-violet-600 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors cursor-pointer"
-                >
-                  Upload another
-                </button>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { reset(); setOpen(false) }}
+                    className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer
+                      bg-gradient-to-r from-violet-500 to-fuchsia-600 text-white
+                      hover:shadow-md hover:shadow-violet-400/30"
+                  >
+                    View in feed
+                  </button>
+                  <button
+                    onClick={reset}
+                    className="py-2.5 px-4 rounded-xl text-sm font-semibold border border-violet-200 dark:border-violet-500/30 text-violet-600 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors cursor-pointer"
+                  >
+                    Upload another
+                  </button>
+                </div>
               </div>
             )}
           </div>
