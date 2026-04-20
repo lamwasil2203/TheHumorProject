@@ -107,7 +107,7 @@ export default async function Home() {
                 </span>
               </div>
             )}
-            {user && <UploadImage />}
+            {user && <UploadImage showFloating />}
             <div className="w-px h-5 bg-slate-200 dark:bg-violet-500/20 mx-0.5" />
             <ThemeToggle />
             <SignOutButton />

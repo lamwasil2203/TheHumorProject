@@ -22,7 +22,7 @@ async function getToken(): Promise<string> {
   return session.access_token
 }
 
-export default function UploadImage() {
+export default function UploadImage({ showFloating = false }: { showFloating?: boolean }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<Status>('idle')
   const [step, setStep] = useState('')
@@ -125,6 +125,29 @@ export default function UploadImage() {
         </svg>
         Upload
       </button>
+
+      {/* Floating action button — always visible as user scrolls */}
+      {showFloating && mounted && createPortal(
+        <div className="fixed bottom-6 right-6 z-40">
+          {/* Pulse ring — plays 3 times on load then stops */}
+          <span
+            className="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-600 animate-ping opacity-75"
+            style={{ animationIterationCount: 3 }}
+          />
+          <button
+            onClick={() => { reset(); setOpen(true) }}
+            className="relative flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 cursor-pointer
+              bg-gradient-to-r from-violet-500 to-fuchsia-600 text-white
+              shadow-[0_4px_20px_rgba(139,92,246,0.5)] hover:shadow-[0_6px_28px_rgba(139,92,246,0.65)] hover:-translate-y-0.5 active:scale-[0.97]"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            Upload Image
+          </button>
+        </div>,
+        document.body
+      )}
 
       {/* Modal — rendered via portal so backdrop-blur on nav doesn't trap it */}
       {mounted && open && createPortal(

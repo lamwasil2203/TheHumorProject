@@ -220,7 +220,7 @@ function BattleCard({ pair, index, total, userId, userVote, counts, onVote, onNe
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                  <span className="text-sm tabular-nums">{c.down}</span>
+                  <span className="text-sm tabular-nums">{hasVoted ? c.down : '?'}</span>
                 </button>
 
                 {/* Tick */}
@@ -236,13 +236,23 @@ function BattleCard({ pair, index, total, userId, userVote, counts, onVote, onNe
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-sm tabular-nums">{c.up}</span>
+                  <span className="text-sm tabular-nums">{hasVoted ? c.up : '?'}</span>
                 </button>
               </div>
 
-              {!hasVoted && (
+              {hasVoted ? (
+                <div className="mt-4 rounded-2xl px-4 py-3 text-center animate-fade-in
+                  bg-violet-50 dark:bg-violet-500/[0.07] border border-violet-100 dark:border-violet-500/[0.15]">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider mb-2
+                    text-violet-400/70 dark:text-violet-400/50">Community voted</p>
+                  <div className="flex justify-center gap-8">
+                    <span className="text-sm font-bold text-green-500 dark:text-green-400">✓ {c.up} liked</span>
+                    <span className="text-sm font-bold text-red-400 dark:text-red-500">✗ {c.down} skipped</span>
+                  </div>
+                </div>
+              ) : (
                 <p className="text-xs text-center mt-4 text-slate-400 dark:text-violet-400/30">
-                  Vote to continue
+                  Vote to reveal the score
                 </p>
               )}
             </>
@@ -455,31 +465,50 @@ export default function CaptionFeed({ imageGroups, userId }: Props) {
       <div className="max-w-2xl mx-auto animate-fade-in">
 
       {/* ── Main tabs ── */}
-      <div className={`${tabBarCls} mb-6`}>
+      <div className={`${tabBarCls} mb-2`}>
         <TabBtn active={tab === 'feed'}        onClick={() => setTab('feed')}>Feed</TabBtn>
-        <TabBtn active={tab === 'game'}        onClick={() => setTab('game')}>Game</TabBtn>
+        <TabBtn active={tab === 'game'}        onClick={() => setTab('game')}>Quick Vote</TabBtn>
         <TabBtn active={tab === 'leaderboard'} onClick={() => setTab('leaderboard')}>Leaderboard</TabBtn>
       </div>
+
+      {/* ── Tab description ── */}
+      <p className="text-xs text-center mb-5 text-slate-400 dark:text-violet-400/50">
+        {tab === 'feed' && 'Browse all captions and upvote or downvote your favorites'}
+        {tab === 'game' && 'Vote blind — scores are hidden until you vote, then the community result is revealed'}
+        {tab === 'leaderboard' && 'Top 100 captions ranked by community votes'}
+      </p>
 
       {/* ════════════════ FEED TAB ════════════════ */}
       {tab === 'feed' && (
         <div className="space-y-5">
 
           {/* Sort + Random */}
-          <div className="flex items-center gap-2">
-            <div className={`${tabBarCls} flex-1`}>
-              {(['new', 'top', 'unvoted'] as const).map(s => (
-                <TabBtn key={s} active={sort === s} onClick={() => { setSort(s); setSpotlightGroup(null) }}>
-                  {s}
-                </TabBtn>
-              ))}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-violet-400/40 shrink-0">
+                Sort by
+              </span>
+              <div className="flex gap-1.5">
+                {(['new', 'top', 'unvoted'] as const).map(s => (
+                  <button
+                    key={s}
+                    onClick={() => { setSort(s); setSpotlightGroup(null) }}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize transition-all duration-200 border cursor-pointer ${
+                      sort === s
+                        ? 'bg-violet-500 text-white border-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.35)]'
+                        : 'bg-white dark:bg-white/[0.03] text-slate-500 dark:text-violet-400/50 border-slate-200 dark:border-violet-500/[0.12] hover:text-violet-600 dark:hover:text-violet-300 hover:border-violet-300 dark:hover:border-violet-500/30'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
             <button
               onClick={handleRandom}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer
-                bg-slate-100/80 border border-slate-200/60 text-slate-600
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer
+                bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-violet-500/[0.1] text-slate-500 dark:text-violet-400/60
                 hover:bg-violet-50 hover:border-violet-200 hover:text-violet-600
-                dark:bg-white/[0.03] dark:border-violet-500/[0.1] dark:text-violet-400/60
                 dark:hover:bg-violet-500/[0.08] dark:hover:border-violet-500/25 dark:hover:text-violet-300"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
